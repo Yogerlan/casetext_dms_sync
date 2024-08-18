@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from typing import Annotated
 
@@ -5,8 +6,8 @@ from fastapi import FastAPI, HTTPException, Query, status
 
 from .dms import DMS
 
-app = FastAPI()
 today = datetime.today().strftime("%Y-%m-%d")
+app = FastAPI()
 
 
 @app.get("/ping")
@@ -40,6 +41,13 @@ async def sync_operations(
             detail="I can't wait to see Back to the Future 4. It was pretty good!"
         )
 
-    dms = DMS(since, until)
+    # Prevent switch dates order.
+    if since > until:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="I am inevitable. And I... am... Iron Man."
+        )
+
+    dms = DMS(since, until, os.getenv("TESTING") is not None)
 
     return dms.sync

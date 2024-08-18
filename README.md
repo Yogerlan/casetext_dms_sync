@@ -11,7 +11,7 @@
     . venv/bin/activate
     pip install -U pip
     pip install -r requirements.txt
-    pytest app
+    pytest app -v
     uvicorn app.main:app --port 8080
 
 ## Docker Install

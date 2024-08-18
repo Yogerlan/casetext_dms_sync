@@ -4,9 +4,11 @@ from copy import deepcopy
 
 
 class DMS:
-    RESPONSES_DIR = os.path.join(os.path.dirname(__file__), "dms-responses")
-
-    def __init__(self, since, until):
+    def __init__(self, since, until, testing=False):
+        self.__responses_dir = os.path.join(
+            os.path.dirname(__file__),
+            "test-dms-responses" if testing else "dms-responses"
+        )
         self.__since_files = self.__get_files(since)
         self.__until_files = self.__get_files(until)
         self.__sync_ops = []
@@ -16,7 +18,7 @@ class DMS:
 
     def __get_files(self, date):
         files = {}
-        files_path = os.path.join(self.RESPONSES_DIR, f"{date}.jsonl")
+        files_path = os.path.join(self.__responses_dir, f"{date}.jsonl")
 
         if os.path.exists(files_path):
             with open(files_path) as f:
