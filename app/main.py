@@ -5,23 +5,53 @@ from typing import Annotated
 from fastapi import FastAPI, HTTPException, Query, status
 
 from .dms import DMS
+from .schemas import PingResponse, SyncResponse
 
 today = datetime.today().strftime("%Y-%m-%d")
-app = FastAPI()
+yesterday = f"{today[:8]}{str(int(today[8:]) - 1)}"
+
+app = FastAPI(
+    title="DMS-CaseText Sync MSV",
+    summary="DMS-CaseText sync operation list generator microservice",
+    description="Keeps customers' research content synced with their provided third-party DMS content, "
+    "by generating the required Research Service operations at some time range.",
+    license_info={
+        "name": "MIT License",
+        "identifier": "MIT"
+    }
+)
 
 
-@app.get("/ping")
+@app.get(
+    "/ping",
+    summary="An ancient game",
+    description="Challenge the server for a match.",
+    response_description="A server response message.",
+    response_model=PingResponse
+)
 async def ping():
     return {"msg": "pong"}
 
 
-@app.get("/sync")
+@app.get(
+    "/sync",
+    summary="Generates a sync operation list",
+    description="Given the file lists of the DMS on two dates, "
+    "an operation list is generated for the Research Service to sync its customers' content.",
+    response_description="A list of file operations.",
+    response_model=list[SyncResponse],
+    response_model_exclude_none=True
+)
 async def sync_operations(
     since: Annotated[str, Query(
-        pattern=r"^\d{4}-\d{2}-\d{2}$"
-    )],
+        pattern=r"^\d{4}-\d{2}-\d{2}$",
+        title="Since",
+        description="Sync starting date."
+    )] = yesterday,
     until: Annotated[str, Query(
-        pattern=r"^\d{4}-\d{2}-\d{2}$"
+        pattern=r"^\d{4}-\d{2}-\d{2}$",
+        title="Until",
+        description="Sync ending date."
     )] = today
 ):
     # Prevent nonsense dates.

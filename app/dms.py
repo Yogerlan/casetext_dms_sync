@@ -38,8 +38,8 @@ class DMS:
         # Delete operations
         for idx in self.__since_files.keys() - self.__until_files.keys():
             file = deepcopy(self.__since_files[idx])
-            del file["name"]
-            del file["meta"]
+            file["name"] = None
+            file["meta"] = None
             self.__sync_ops.append({"op": "deleteFile", "file": file})
 
     def __get_update_ops(self):
@@ -48,13 +48,13 @@ class DMS:
             # Update FileName
             if self.__since_files[idx]["name"] != self.__until_files[idx]["name"]:
                 file = deepcopy(self.__until_files[idx])
-                del file["meta"]
+                file["meta"] = None
                 self.__sync_ops.append({"op": "updateFileName", "file": file})
 
             # Update FileMeta
             if self.__since_files[idx]["meta"] != self.__until_files[idx]["meta"]:
                 file = deepcopy(self.__until_files[idx])
-                del file["name"]
+                file["name"] = None
                 self.__sync_ops.append({"op": "updateFileMeta", "file": file})
 
     @property
