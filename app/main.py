@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Query, status
@@ -8,7 +8,7 @@ from .dms import DMS
 from .schemas import PingResponse, SyncResponse
 
 today = datetime.today().strftime("%Y-%m-%d")
-yesterday = f"{today[:8]}{str(int(today[8:]) - 1)}"
+yesterday = (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d")
 
 app = FastAPI(
     title="DMS-CaseText Sync MSV",

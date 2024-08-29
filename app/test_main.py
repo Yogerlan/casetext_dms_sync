@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta
 
 from fastapi import status
 from fastapi.testclient import TestClient
@@ -31,8 +32,8 @@ def test_sync():
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     # Test future date.
-    since = f"{str(int(today[:4]) - 1)}{today[4:]}"
-    until = f"{str(int(today[:4]) + 1)}{today[4:]}"
+    since = (datetime.today() - timedelta(days=365)).strftime("%Y-%m-%d")
+    until = (datetime.today() + timedelta(days=365)).strftime("%Y-%m-%d")
     response = client.get("/sync", params={
         "since": since,
         "until": until
@@ -40,7 +41,6 @@ def test_sync():
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     # Test switched dates.
-    since = f"{str(int(today[:4]) - 1)}{today[4:]}"
     response = client.get("/sync", params={
         "since": today,
         "until": since
