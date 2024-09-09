@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from typing import Annotated
 
@@ -9,8 +10,23 @@ from .schemas import PingResponse, SyncResponse
 
 today = datetime.today().strftime("%Y-%m-%d")
 yesterday = (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+context = {}
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    testing = os.getenv("TESTING") is not None
+    docker = os.getenv("DOCKER") is not None
+    dms = DMS(testing, docker)
+    await dms.store_documents()
+    context["dms"] = dms
+    yield
+    await dms.clean_documents()
+    context.clear()
+
 
 app = FastAPI(
+    lifespan=lifespan,
     title="DMS-CaseText Sync MSV",
     summary="DMS-CaseText sync operation list generator microservice",
     description="Keeps customers' research content synced with their provided third-party DMS content, "
@@ -78,6 +94,4 @@ async def sync_operations(
             detail="I am inevitable. And I... am... Iron Man."
         )
 
-    dms = DMS(since, until, os.getenv("TESTING") is not None)
-
-    return dms.sync
+    return await context["dms"].get_ops(since, until)

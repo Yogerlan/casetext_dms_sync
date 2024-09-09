@@ -1,5 +1,15 @@
 services:
-  web:
-    build: .
+  db:
+    container_name: db
+    image: mongodb/mongodb-community-server:latest
     ports:
-      - "8080:80"
+      - "27017:27017"
+
+  web:
+    container_name: web
+    build: .
+    command: sh -c "pytest app -v && uvicorn app.main:app --host 0.0.0.0 --port 8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
