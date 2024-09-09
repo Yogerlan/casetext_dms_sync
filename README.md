@@ -3,6 +3,7 @@
 * [Python 3.12](https://www.python.org/downloads/)
 * [FastAPI](https://fastapi.tiangolo.com/)
 * [PyTest](https://docs.pytest.org/en/stable/)
+* [MongoDB](https://www.mongodb.com/docs/manual/administration/install-community/)
 * [Docker](https://www.docker.com/)
 
 ## Local Install
@@ -16,7 +17,7 @@
 
 ## Docker Install
 
-    docker-compose up web
+    docker-compose up
 
 ## Documentation
 
