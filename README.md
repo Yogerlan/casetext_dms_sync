@@ -17,7 +17,7 @@
 
 ## Docker Install
 
-    docker-compose up
+    docker compose up
 
 ## Documentation
 
@@ -29,3 +29,4 @@
 * Non-existing DMS responses are treated as empty lists.
 * Default input dates are `yesterday` and `today`.
 * Try the endpoint with wrong input dates for funny response messages. Enjoy it!
+* Install `docker-compose-v2` instead `docker-compose-plugin`. There is a bug with the former plugin when upgrading to Ubuntu Noble.
